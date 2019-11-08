@@ -7,7 +7,15 @@
     <title>Rock Paper Scissors</title>
 </head>
 <body>
-    
+    <div id="buttonContainer">
+        <button id="rock" class="playerMoveButton">Rock</button>
+        <button id="paper" class="playerMoveButton">Paper</button>
+        <button id="scissors" class="playerMoveButton">Scissors</button>
+    </div>
+
+    <div id="results">
+
+    </div>
 </body>
 <script>
     function computerPlay() {
@@ -17,7 +25,6 @@
 
     function playRound(playerSelection, computerSelection) {
         let playerPick = playerSelection.toLowerCase();
-
         if(playerPick == "rock") {
             if(computerSelection == "Paper"){
                 return "lost";
@@ -29,7 +36,6 @@
                 return "tied";
             }
         }
-
         if(playerPick == "paper") {
             if(computerSelection == "Rock") {
                 return "won";
@@ -41,7 +47,6 @@
                 return "tied";
             }
         }
-
         if(playerPick == "scissors") {
             if(computerSelection == "Rock") {
                 return "lost";
@@ -53,50 +58,69 @@
                 return "tied";
             }
         }
+
     }
 
-    function gameResults(playerScore, computerScore) {
+    function gameResults(playerScore, computerScore, element) {
         if(playerScore > computerScore){
-            console.log(`You win the game with a score of ${playerScore} to ${computerScore}!`);
+            return element.textContent = `You win the game with a score of ${playerScore} to ${computerScore}!`;
         }
         else if(playerScore < computerScore) {
-            console.log(`You lose the game with a score of ${playerScore} to ${computerScore}.`);
+            return element.textContent = `You lose the game with a score of ${playerScore} to ${computerScore}.`;
         }
         else {
-            console.log(`You tied the game with a score of ${playerScore} to ${computerScore}.`);
+            return element.textContent = `You tied the game with a score of ${playerScore} to ${computerScore}.`;
         }
         
     
     }
 
+    function disableButtons(){
+        let buttons = document.getElementsByClassName('playerMoveButton');
+        for(let i = 0; i < buttons.length; i++){
+            buttons[i].disabled = true;
+        }
+    }
+    
     function game() {
 
         let playerScore = 0;
         let computerScore = 0;
 
-        for(let i = 0; i < 5; i++) {
-            const computerSelection = computerPlay();
-            const playerSelection = prompt("Pick Rock, Paper, or Scissors");
-            let gameRound = playRound(playerSelection, computerSelection);
+        const results = document.querySelector('#results');
+        const score = document.createElement('h2');
+        const gameWinner = document.createElement('h3');
 
-            if(gameRound == "won") {
-                playerScore++;
-                console.log(`You win! ${playerSelection} beats ${computerSelection}`);
-            }
-            else if(gameRound == "lost") {
-                computerScore++;
-                console.log(`You lose! ${computerSelection} beats ${playerSelection}`);
-            }
-            else {
-                console.log(`It's a tie! Play again`);
-            }
+        score.textContent = `${playerScore} - ${computerScore}`;
+        results.appendChild(score);
 
-        }
+        const buttons = document.querySelectorAll('button');
+        buttons.forEach((button) => {
 
-        gameResults(playerScore, computerScore);
 
+            button.addEventListener('click', (e) => {
+                //console.log(e);
+                let gameRound = playRound(button.id, computerPlay());
+
+                if(gameRound == "won") {
+                    playerScore++;
+                }
+                if(gameRound == "lost") {
+                    computerScore++;
+                }
+                
+                if(playerScore == 5 || computerScore == 5){
+                   results.append(gameResults(playerScore, computerScore, gameWinner));
+                   disableButtons();
+                }
+
+                score.textContent = `${playerScore} - ${computerScore}`;
+
+            });
+        })
     }
 
     game();
+
 </script>
 </html>
